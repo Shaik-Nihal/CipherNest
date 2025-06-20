@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecretVault - Advanced Steganography Platform</title>
+    <meta name="description" content="SecretVault lets you securely hide and reveal confidential messages in images using AES-256 encryption and advanced steganography. Fast, secure, and user-friendly.">
+    <meta name="keywords" content="steganography, hide message, encrypt image, AES-256, secret, secure, Flask, SecretVault, image encryption, data hiding">
+    <meta name="author" content="SecretVault">
+    <meta property="og:title" content="SecretVault - Advanced Steganography Platform">
+    <meta property="og:description" content="Hide and reveal secret messages in images with military-grade encryption. Secure, private, and invisible.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://stegno-project.onrender.com/">
+    <meta property="og:image" content="https://stegno-project.onrender.com/static/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="canonical" href="https://stegno-project.onrender.com/">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔐</text></svg>">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1 class="fade-in">🔐 SecretVault</h1>
+            <nav class="nav slide-in">
+                <a class="nav-link" href="{{ url_for('index') }}">🏠 Home</a>
+                <a class="nav-link" href="{{ url_for('encode_page_route') }}">🔒 Hide Message</a>
+                <a class="nav-link" href="{{ url_for('decode_page_route') }}">🔓 Reveal Message</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="jumbotron fade-in">
+            <h2 class="display-4">Advanced Steganography Platform</h2>
+            <p class="lead">
+                Securely hide your confidential messages within ordinary images using military-grade encryption. 
+                Your secrets remain invisible to the naked eye while being protected by cutting-edge cryptography.
+            </p>
+            <hr class="my-4" style="border-color: rgba(255,255,255,0.2); border-width: 1px;">
+            
+            <div class="row mt-5">
+                <div class="col-md-6 mb-4">
+                    <div class="card scale-in">
+                        <div class="card-body text-center">
+                            <div class="float-animation" style="font-size: 3.5rem; margin-bottom: 1.5rem;">🔒</div>
+                            <h4 class="text-gradient mb-3">Hide Messages</h4>
+                            <p class="text-secondary mb-4" style="line-height: 1.6;">
+                                Embed your secret messages into PNG images with AES-256 encryption.
+                                Your data is protected with unique salts and advanced key derivation.
+                            </p>
+                            <a class="btn btn-primary btn-lg glow-effect" href="{{ url_for('encode_page_route') }}" role="button">
+                                Start Hiding Messages
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 mb-4">
+                    <div class="card rotate-in">
+                        <div class="card-body text-center">
+                            <div class="float-animation" style="font-size: 3.5rem; margin-bottom: 1.5rem; animation-delay: 1s;">🔓</div>
+                            <h4 class="text-gradient-blue mb-3">Reveal Secrets</h4>
+                            <p class="text-secondary mb-4" style="line-height: 1.6;">
+                                Extract hidden messages from images with the correct decryption key.
+                                Unlock the secrets hidden in plain sight with precision.
+                            </p>
+                            <a class="btn btn-secondary btn-lg" href="{{ url_for('decode_page_route') }}" role="button">
+                                Reveal Hidden Secrets
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-5">
+                <div class="col-12">
+                    <div class="card fade-in">
+                        <div class="card-body">
+                            <h5 class="text-gradient-pink mb-4 text-center" style="font-size: 1.5rem;">🛡️ Security Features</h5>
+                            <div class="row">
+                                <div class="col-md-3 text-center mb-4">
+                                    <div class="float-animation" style="font-size: 2.5rem; margin-bottom: 1rem;">🔐</div>
+                                    <h6 class="text-gradient" style="font-size: 1.1rem;">AES-256</h6>
+                                    <p class="text-secondary" style="font-size: 0.9rem;">Military-grade encryption standard</p>
+                                </div>
+                                <div class="col-md-3 text-center mb-4">
+                                    <div class="float-animation" style="font-size: 2.5rem; margin-bottom: 1rem; animation-delay: 0.5s;">🧂</div>
+                                    <h6 class="text-gradient-blue" style="font-size: 1.1rem;">Unique Salt</h6>
+                                    <p class="text-secondary" style="font-size: 0.9rem;">Cryptographic salt for each message</p>
+                                </div>
+                                <div class="col-md-3 text-center mb-4">
+                                    <div class="float-animation" style="font-size: 2.5rem; margin-bottom: 1rem; animation-delay: 1s;">🔄</div>
+                                    <h6 class="text-gradient-pink" style="font-size: 1.1rem;">PBKDF2</h6>
+                                    <p class="text-secondary" style="font-size: 0.9rem;">100,000 iterations key derivation</p>
+                                </div>
+                                <div class="col-md-3 text-center mb-4">
+                                    <div class="float-animation" style="font-size: 2.5rem; margin-bottom: 1rem; animation-delay: 1.5s;">👁️</div>
+                                    <h6 class="text-gradient" style="font-size: 1.1rem;">Invisible</h6>
+                                    <p class="text-secondary" style="font-size: 0.9rem;">Undetectable to human eye</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card slide-in">
+                        <div class="card-body text-center">
+                            <h5 class="text-gradient mb-4" style="font-size: 1.4rem;">Why Choose SecretVault?</h5>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <div style="font-size: 2rem; margin-bottom: 1rem;">⚡</div>
+                                    <h6 style="color: #ffa726; font-weight: 600;">Lightning Fast</h6>
+                                    <p class="text-secondary" style="font-size: 0.9rem;">Process images in seconds</p>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div style="font-size: 2rem; margin-bottom: 1rem;">🔒</div>
+                                    <h6 style="color: #43e97b; font-weight: 600;">Ultra Secure</h6>
+                                    <p class="text-secondary" style="font-size: 0.9rem;">Bank-level security protection</p>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div style="font-size: 2rem; margin-bottom: 1rem;">🎨</div>
+                                    <h6 style="color: #4facfe; font-weight: 600;">User Friendly</h6>
+                                    <p class="text-secondary" style="font-size: 0.9rem;">Intuitive and elegant interface</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 SecretVault • Secure • Private • Invisible</p>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Staggered animations
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+
+            // Enhanced hover effects
+            const featureCards = document.querySelectorAll('.col-md-3, .col-md-4');
+            featureCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                    this.style.transition = 'all 0.3s ease';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Add floating animation class to icons
+            const floatingIcons = document.querySelectorAll('.float-animation');
+            floatingIcons.forEach(icon => {
+                icon.classList.add('float-animation');
+            });
+        });
+    </script>
+</body>
+</html>

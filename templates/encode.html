@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="description" content="Hide secret messages in images with AES-256 encryption. SecretVault is a secure, user-friendly steganography platform.">
+    <meta name="keywords" content="steganography, hide message, encrypt image, AES-256, secret, secure, Flask, SecretVault">
+    <meta name="author" content="SecretVault">
+    <meta property="og:title" content="Hide Message - SecretVault">
+    <meta property="og:description" content="Hide secret messages in images with AES-256 encryption. SecretVault is a secure, user-friendly steganography platform.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://stegno-project.onrender.com/encode_page">
+    <meta property="og:image" content="https://stegno-project.onrender.com/static/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="canonical" href="https://stegno-project.onrender.com/encode_page">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hide Message - SecretVault</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔐</text></svg>">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1 class="fade-in">🔐 SecretVault</h1>
+            <nav class="nav slide-in">
+                <a class="nav-link" href="{{ url_for('index') }}">🏠 Home</a>
+                <a class="nav-link" href="{{ url_for('encode_page_route') }}">🔒 Hide Message</a>
+                <a class="nav-link" href="{{ url_for('decode_page_route') }}">🔓 Reveal Message</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="card fade-in">
+            <h3 class="text-gradient mb-4">🔒 Hide Your Secret Message</h3>
+            
+            <form id="encodeForm" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="imageFile">
+                        📸 Select Your Cover Image
+                        <small>Choose a high-quality PNG image to hide your message in</small>
+                    </label>
+                    <div id="encodeDropZone" class="drop-zone">
+                        <span class="drop-zone-prompt">
+                            Drag & Drop your PNG image here, or click to browse
+                        </span>
+                        <input type="file" class="form-control-file" id="imageFile" name="image" accept=".png" required style="opacity:0; position:absolute; z-index:-1;">
+                    </div>
+                    <div id="encodeFileName" class="file-name-display mt-2"></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card scale-in">
+                            <div class="card-body">
+                                <h5 class="text-gradient">📷 Original Image</h5>
+                                <img id="originalImagePreview" src="#" alt="Original Image Preview" class="img-fluid image-preview" style="display:none; max-height: 300px; width: 100%; object-fit: contain;"/>
+                                <div class="text-center" id="originalPlaceholder" style="padding: 60px 20px;">
+                                    <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.6;">🖼️</div>
+                                    <h6 style="color: var(--text-secondary); font-weight: 600;">Your original image will appear here</h6>
+                                    <p style="color: var(--text-muted); font-size: 0.9rem;">Upload a PNG image to get started</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card rotate-in">
+                            <div class="card-body">
+                                <h5 class="text-gradient-blue">🔐 Encoded Image</h5>
+                                <img id="encodedImagePreview" src="#" alt="Encoded Image Preview" class="img-fluid image-preview" style="display:none; max-height: 300px; width: 100%; object-fit: contain;"/>
+                                <div class="text-center" id="encodedPlaceholder" style="padding: 60px 20px;">
+                                    <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.6;">🔒</div>
+                                    <h6 style="color: var(--text-secondary); font-weight: 600;">Your encoded image will appear here</h6>
+                                    <p style="color: var(--text-muted); font-size: 0.9rem;">After processing, download your secure image</p>
+                                </div>
+                                <div id="downloadLinkContainer" class="mt-4 text-center" style="display:none;">
+                                    <a id="downloadEncodedImage" class="btn btn-success btn-lg glow-effect" href="#" download="encoded_image.png">
+                                        📥 Download Encoded Image
+                                    </a>
+                                    <p class="mt-3" style="color: var(--text-muted); font-size: 0.9rem;">
+                                        🔐 Your message is now safely hidden and encrypted!
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">
+                        💬 Your Secret Message
+                        <small>Enter the confidential message you want to hide securely</small>
+                    </label>
+                    <textarea class="form-control" id="message" name="message" rows="4" required 
+                              placeholder="Type your secret message here... It will be encrypted with AES-256 before hiding."
+                              style="font-family: 'Inter', monospace;"></textarea>
+                </div>
+
+                <div id="sizeEstimateDisplay" class="size-estimate-display">
+                    📏 <strong>Capacity Analysis:</strong><br>
+                    Enter your message and select an image for detailed capacity analysis.
+                </div>
+
+                <div class="form-group">
+                    <label for="key">
+                        🔑 Encryption Key
+                        <small>Choose a strong, memorable password to protect your message</small>
+                    </label>
+                    <input type="password" class="form-control" id="key" name="key" required 
+                           placeholder="Enter a strong encryption key (minimum 8 characters recommended)..."
+                           style="font-size: 1rem;">
+                    <div id="keyStrengthMeterEncode" class="strength-meter"></div>
+                    <div class="mt-2" style="font-size: 0.85rem; color: var(--text-muted);">
+                        💡 <strong>Tip:</strong> Use a mix of uppercase, lowercase, numbers, and symbols for maximum security
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg glow-effect">
+                        🔒 Hide Message Securely
+                    </button>
+                    <p class="mt-3" style="color: var(--text-muted); font-size: 0.9rem;">
+                        🛡️ Your message will be encrypted with AES-256 and embedded invisibly
+                    </p>
+                </div>
+            </form>
+
+            <div id="encodeAlerts" class="mt-4"></div>
+        </div>
+
+        <!-- Refined Loading Overlay -->
+        <div id="loadingOverlayEncode" class="loading-overlay">
+            <div class="loading-spinner-container">
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <p class="mt-3">🔐 Encrypting and hiding your message...</p>
+                <small class="text-secondary">Applying military-grade encryption • This may take a few moments</small>
+                <div class="mt-3" style="font-size: 0.8rem; color: var(--text-muted);">
+                    ⚡ Processing with AES-256 • 🧂 Generating unique salt • 🔄 PBKDF2 key derivation
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 SecretVault • Your secrets are safe with us</p>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Staggered card animations
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.15}s`;
+            });
+
+            // Enhanced form interactions
+            const formInputs = document.querySelectorAll('.form-control');
+            formInputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.style.transform = 'scale(1.01)';
+                    this.parentElement.style.transition = 'all 0.3s ease';
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.parentElement.style.transform = 'scale(1)';
+                });
+            });
+
+            // Enhanced drop zone interactions
+            const dropZone = document.getElementById('encodeDropZone');
+            if (dropZone) {
+                dropZone.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.01)';
+                });
+                
+                dropZone.addEventListener('mouseleave', function() {
+                    if (!this.classList.contains('dragover')) {
+                        this.style.transform = 'scale(1)';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reveal Message - SecretVault</title>
+    <meta name="description" content="Reveal and decrypt hidden messages from images using AES-256 encryption with SecretVault. Securely extract confidential information from encoded PNG files.">
+    <meta name="keywords" content="steganography, reveal message, decrypt image, AES-256, secret, secure, Flask, SecretVault, image decryption, data extraction">
+    <meta name="author" content="SecretVault">
+    <meta property="og:title" content="Reveal Message - SecretVault">
+    <meta property="og:description" content="Extract and decrypt secret messages from images using advanced steganography and AES-256 encryption.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://stegno-project.onrender.com/decode_page">
+    <meta property="og:image" content="https://stegno-project.onrender.com/static/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="canonical" href="https://stegno-project.onrender.com/decode_page">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔐</text></svg>">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1 class="fade-in">🔐 SecretVault</h1>
+            <nav class="nav slide-in">
+                <a class="nav-link" href="{{ url_for('index') }}">🏠 Home</a>
+                <a class="nav-link" href="{{ url_for('encode_page_route') }}">🔒 Hide Message</a>
+                <a class="nav-link" href="{{ url_for('decode_page_route') }}">🔓 Reveal Message</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="card fade-in">
+            <h3 class="text-gradient mb-4">🔓 Reveal Hidden Secrets</h3>
+            
+            <form id="decodeForm" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="imageFile">
+                        🔍 Select Encoded Image
+                        <small>Choose the PNG image containing the hidden encrypted message</small>
+                    </label>
+                    <div id="decodeDropZone" class="drop-zone">
+                        <span class="drop-zone-prompt">
+                            Drag & Drop your encoded PNG image here, or click to browse
+                        </span>
+                        <input type="file" class="form-control-file" id="imageFile" name="image" accept=".png" required style="opacity:0; position:absolute; z-index:-1;">
+                    </div>
+                    <div id="decodeFileName" class="file-name-display mt-2"></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card scale-in">
+                            <div class="card-body">
+                                <h5 class="text-gradient">📷 Encoded Image</h5>
+                                <img id="decodeImagePreview" src="#" alt="Image Preview" class="img-fluid image-preview" style="display:none; max-height: 300px; width: 100%; object-fit: contain;"/>
+                                <div class="text-center" id="decodePlaceholder" style="padding: 60px 20px;">
+                                    <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.6;">🔍</div>
+                                    <h6 style="color: var(--text-secondary); font-weight: 600;">Your encoded image will appear here</h6>
+                                    <p style="color: var(--text-muted); font-size: 0.9rem;">Upload the image with hidden message</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card rotate-in">
+                            <div class="card-body">
+                                <h5 class="text-gradient-pink">💬 Hidden Message</h5>
+                                <div id="revealedMessageContainer" style="display:none;">
+                                    <textarea id="revealedMessage" class="form-control" rows="8" readonly 
+                                              style="font-family: 'Inter', monospace; background: rgba(67, 233, 123, 0.1); border: 2px solid #43e97b; color: var(--text-primary); font-size: 1rem; line-height: 1.6;"></textarea>
+                                    <div class="mt-4 text-center">
+                                        <button type="button" class="btn btn-success btn-lg glow-effect" onclick="copyToClipboard()">
+                                            📋 Copy Message to Clipboard
+                                        </button>
+                                        <p class="mt-3" style="color: var(--text-muted); font-size: 0.9rem;">
+                                            ✅ Message successfully decrypted and revealed!
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="text-center" id="messagePlaceholder" style="padding: 60px 20px;">
+                                    <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.6;">💬</div>
+                                    <h6 style="color: var(--text-secondary); font-weight: 600;">The hidden message will appear here</h6>
+                                    <p style="color: var(--text-muted); font-size: 0.9rem;">After decryption, your secret will be revealed</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="key">
+                        🔑 Decryption Key
+                        <small>Enter the exact password used to encrypt the message</small>
+                    </label>
+                    <input type="password" class="form-control" id="key" name="key" required 
+                           placeholder="Enter the decryption key used during encoding..."
+                           style="font-size: 1rem;">
+                    <div id="keyStrengthMeterDecode" class="strength-meter"></div>
+                    <div class="mt-2" style="font-size: 0.85rem; color: var(--text-muted);">
+                        🔐 <strong>Security Note:</strong> The key must match exactly for successful decryption
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg glow-effect">
+                        🔓 Reveal Hidden Message
+                    </button>
+                    <p class="mt-3" style="color: var(--text-muted); font-size: 0.9rem;">
+                        🔍 Decrypt and extract your secret message with AES-256
+                    </p>
+                </div>
+            </form>
+
+            <div id="decodeAlerts" class="mt-4"></div>
+        </div>
+
+        <!-- Refined Loading Overlay -->
+        <div id="loadingOverlayDecode" class="loading-overlay">
+            <div class="loading-spinner-container">
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <p class="mt-3">🔍 Decrypting and extracting your message...</p>
+                <small class="text-secondary">Analyzing encrypted data • Applying decryption algorithms</small>
+                <div class="mt-3" style="font-size: 0.8rem; color: var(--text-muted);">
+                    🔓 AES-256 Decryption • 🧂 Salt verification • 🔄 PBKDF2 key derivation
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 SecretVault • Unlock your hidden messages</p>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    <script>
+        function copyToClipboard() {
+            const messageTextarea = document.getElementById('revealedMessage');
+            if (messageTextarea && messageTextarea.value) {
+                messageTextarea.select();
+                messageTextarea.setSelectionRange(0, 99999);
+                
+                try {
+                    document.execCommand('copy');
+                    
+                    const button = event.target;
+                    const originalText = button.innerHTML;
+                    button.innerHTML = '✅ Copied Successfully!';
+                    button.classList.remove('btn-success');
+                    button.classList.add('btn-info');
+                    button.style.transform = 'scale(1.05)';
+                    
+                    setTimeout(() => {
+                        button.innerHTML = originalText;
+                        button.classList.remove('btn-info');
+                        button.classList.add('btn-success');
+                        button.style.transform = 'scale(1)';
+                    }, 2000);
+                } catch (err) {
+                    console.error('Failed to copy text: ', err);
+                    const button = event.target;
+                    const originalText = button.innerHTML;
+                    button.innerHTML = '❌ Copy Failed';
+                    button.classList.add('btn-danger');
+                    
+                    setTimeout(() => {
+                        button.innerHTML = originalText;
+                        button.classList.remove('btn-danger');
+                        button.classList.add('btn-success');
+                    }, 2000);
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Staggered card animations
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.15}s`;
+            });
+
+            // Enhanced form interactions
+            const formInputs = document.querySelectorAll('.form-control');
+            formInputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.style.transform = 'scale(1.01)';
+                    this.parentElement.style.transition = 'all 0.3s ease';
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.parentElement.style.transform = 'scale(1)';
+                });
+            });
+
+            // Enhanced drop zone interactions
+            const dropZone = document.getElementById('decodeDropZone');
+            if (dropZone) {
+                dropZone.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.01)';
+                });
+                
+                dropZone.addEventListener('mouseleave', function() {
+                    if (!this.classList.contains('dragover')) {
+                        this.style.transform = 'scale(1)';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

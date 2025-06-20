@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://stegno-project.onrender.com/sitemap.xml
